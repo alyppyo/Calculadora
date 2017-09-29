@@ -21,8 +21,8 @@ public class JFrameCalculadora extends javax.swing.JFrame {
     public JFrameCalculadora() {
         initComponents();
         
-        // Inicializar variável de limpeza de display
-        limpar = false;
+        // Inicializar variáveis
+        limparValores();
     }
 
     /**
@@ -298,11 +298,7 @@ public class JFrameCalculadora extends javax.swing.JFrame {
     }//GEN-LAST:event_botao0ActionPerformed
 
     private void botaoLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLimparActionPerformed
-        display.setText("0");
-        operando1 = 0;
-        operando2 = 0;
-        operador  = Operacao.NENHUMA;
-        limpar    = false;
+        limparValores();
     }//GEN-LAST:event_botaoLimparActionPerformed
 
     private void botaoIgualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoIgualActionPerformed
@@ -331,7 +327,21 @@ public class JFrameCalculadora extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoSubtracaoActionPerformed
 
     private void botaoFatorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoFatorialActionPerformed
-        // TODO add your handling code here:
+        // Declaração de variáveis
+        long resultado;
+        
+        // Obter valor do display
+        operando1 = Long.parseLong(display.getText());
+        
+        // Calcular fatorial do valor obtido
+        resultado = fatorial(operando1);
+        
+        // Preencher display de acordo com o resultado
+        if(resultado == -1) display.setText("ERRO");
+        else display.setText( String.valueOf(resultado) );
+        
+        // Ativar limpeza do display
+        limpar = true;
     }//GEN-LAST:event_botaoFatorialActionPerformed
 
     /**
@@ -376,6 +386,20 @@ public class JFrameCalculadora extends javax.swing.JFrame {
             display.setText(display.getText() + valor);
         }
         limpar = false;
+    }
+    
+    private long fatorial(long numero) {
+        if(numero < 0) return -1;
+        if(numero < 2) return 1;
+        return numero * fatorial(numero-1);
+    }
+    
+    private void limparValores() {
+        display.setText("0");
+        operando1 = 0;
+        operando2 = 0;
+        operador  = Operacao.NENHUMA;
+        limpar    = false;
     }
     
     private void prepararOperacao(Operacao op) {
