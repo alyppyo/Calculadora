@@ -1,3 +1,6 @@
+
+import java.io.Console;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -56,10 +59,10 @@ public class JFrameCalculadora extends javax.swing.JFrame {
         setTitle("Calculadora");
 
         display.setEditable(false);
-        display.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        display.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         display.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         display.setText("0");
-        display.setToolTipText("");
+        display.setToolTipText(null);
 
         botao7.setText("7");
         botao7.addActionListener(new java.awt.event.ActionListener() {
@@ -302,8 +305,10 @@ public class JFrameCalculadora extends javax.swing.JFrame {
     }//GEN-LAST:event_botaoLimparActionPerformed
 
     private void botaoIgualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoIgualActionPerformed
-        operando2 = Long.parseLong(display.getText());
+        // Recupera o valor do display e o insere como operando
+        operando2 = obterValorDisplay();
         
+        // Verifica qual a operação solicitada e a realiza de acordo
         switch(operador) {
             case ADICAO:
                 operando1 += operando2;
@@ -315,6 +320,7 @@ public class JFrameCalculadora extends javax.swing.JFrame {
                 break;
         }
         
+        // Ativa a solicitação por limpeza
         limpar = true;
     }//GEN-LAST:event_botaoIgualActionPerformed
 
@@ -331,7 +337,7 @@ public class JFrameCalculadora extends javax.swing.JFrame {
         long resultado;
         
         // Obter valor do display
-        operando1 = Long.parseLong(display.getText());
+        prepararOperacao(Operacao.FATORIAL);
         
         // Calcular fatorial do valor obtido
         resultado = fatorial(operando1);
@@ -379,21 +385,30 @@ public class JFrameCalculadora extends javax.swing.JFrame {
         });
     }
     
+    // Atualiza o display com o valor correspondente.
     private void atualizarDisplay(String valor) {
-        if(display.getText().length() < 14) {
-            if(display.getText().equals("0") || limpar) 
-                display.setText("");
+        // Se a limpeza foi ativada, apaga o conteúdo do display
+        if(limpar) display.setText("");
+        
+        // Se o conteúdo for menor que o limite, permite que seja inserido mais.
+        if(display.getText().length() < 19) {
+            if(display.getText().equals("0")) display.setText("");
             display.setText(display.getText() + valor);
         }
+        
+        // Desativa a solicitação de limpeza
         limpar = false;
     }
     
+    // Calcula o fatorial. Versão recursiva.
     private long fatorial(long numero) {
         if(numero < 0) return -1;
         if(numero < 2) return 1;
         return numero * fatorial(numero-1);
     }
     
+    // Preenche as variáveis com seus valores padrão. Redefine o texto apresentado
+    // no display para zero.
     private void limparValores() {
         display.setText("0");
         operando1 = 0;
@@ -402,8 +417,45 @@ public class JFrameCalculadora extends javax.swing.JFrame {
         limpar    = false;
     }
     
+    // Verificar se uma string passada representa um número
+    private boolean numeroValido(String str) {
+        // Declaração de variáveis
+        final int TAM;
+        int i = 0;
+        
+        // Testar se é nula
+        if(str == null) return false;
+        
+        // Testar se não é vazia
+        TAM = str.length();
+        if(TAM == 0) return false;
+        
+        // Testar se é composta apenas de um símbolo de subtração
+        if(str.charAt(0) == '-') {
+            if(TAM == 1) return false;
+            i = 1;
+        }
+        
+        // Percorrer string verificando cada um dos caracteres
+        while(i < TAM) {
+            if(str.charAt(i) < '0' || str.charAt(i) > '9') return false;
+            i++;
+        }
+
+        return true;
+    }
+    
+    // Analisa se a string apresentada no display é um número válido. Caso seja,
+    // a converte para long e retorna o valor correspondente. Caso contrário, 
+    // retorna zero.
+    private long obterValorDisplay() {
+        if(numeroValido(display.getText())) return Long.parseLong(display.getText());
+        else return 0;
+    }
+    
+    // Captura o conteúdo da tela e define o operador
     private void prepararOperacao(Operacao op) {
-        operando1 = Long.parseLong(display.getText());
+        operando1 = obterValorDisplay();
         operador  = op;
         limpar = true;
     }
