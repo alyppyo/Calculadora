@@ -9,12 +9,20 @@
  * @author Alyppyo Coutinho
  */
 public class JFrameCalculadora extends javax.swing.JFrame {
-
+    // Declaração de variáveis
+    private long operando1;
+    private long operando2;
+    private Operacao operador;
+    private boolean limpar;
+    
     /**
      * Creates new form JFrameCalculadora
      */
     public JFrameCalculadora() {
         initComponents();
+        
+        // Inicializar variável de limpeza de display
+        limpar = false;
     }
 
     /**
@@ -291,18 +299,35 @@ public class JFrameCalculadora extends javax.swing.JFrame {
 
     private void botaoLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLimparActionPerformed
         display.setText("0");
+        operando1 = 0;
+        operando2 = 0;
+        operador  = Operacao.NENHUMA;
+        limpar    = false;
     }//GEN-LAST:event_botaoLimparActionPerformed
 
     private void botaoIgualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoIgualActionPerformed
-        // TODO add your handling code here:
+        operando2 = Long.parseLong(display.getText());
+        
+        switch(operador) {
+            case ADICAO:
+                operando1 += operando2;
+                display.setText(String.valueOf(operando1));
+                break;
+            case SUBTRACAO:
+                operando1 -= operando2;
+                display.setText(String.valueOf(operando1));
+                break;
+        }
+        
+        limpar = true;
     }//GEN-LAST:event_botaoIgualActionPerformed
 
     private void botaoAdicaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAdicaoActionPerformed
-        // TODO add your handling code here:
+        prepararOperacao(Operacao.ADICAO);
     }//GEN-LAST:event_botaoAdicaoActionPerformed
 
     private void botaoSubtracaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSubtracaoActionPerformed
-        // TODO add your handling code here:
+        prepararOperacao(Operacao.SUBTRACAO);
     }//GEN-LAST:event_botaoSubtracaoActionPerformed
 
     private void botaoFatorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoFatorialActionPerformed
@@ -346,10 +371,17 @@ public class JFrameCalculadora extends javax.swing.JFrame {
     
     private void atualizarDisplay(String valor) {
         if(display.getText().length() < 14) {
-            if(display.getText().equals("0"))
+            if(display.getText().equals("0") || limpar) 
                 display.setText("");
             display.setText(display.getText() + valor);
         }
+        limpar = false;
+    }
+    
+    private void prepararOperacao(Operacao op) {
+        operando1 = Long.parseLong(display.getText());
+        operador  = op;
+        limpar = true;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
